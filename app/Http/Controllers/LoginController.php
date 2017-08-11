@@ -19,7 +19,7 @@ class LoginController extends Controller
 	public function index()
 	{
 		if(Auth::check()) dd("already logged in ");
-		return view('login.index');
+		return view('pages.login');
 	}
 
 	public function store(Request $request, APIRequestLogin $apiRequest)
