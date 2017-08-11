@@ -20,6 +20,7 @@ Route::resource('login', 'LoginController', ['only' => ['index', 'store']]);
 
 // Matches The "/transaction/XXX" URL
 Route::prefix('transaction')->middleware(['checkauth'])->group(function () {
+	Route::get('report', ['uses'=>'Transactions\ReportController@index', 'as'=>'transactionReportController']);
 	Route::get('list', ['uses'=>'Transactions\ListController@index', 'as'=>'transactionListController']);
 });
 

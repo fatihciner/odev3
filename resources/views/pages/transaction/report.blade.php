@@ -1,16 +1,15 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: fyilmaz
+ * Date: 12.08.2017
+ * Time: 00:49
+ */ ?>
+
 @extends('layouts.default')
 
 @section('content')
-    {{ Form::open(array('id' => 'loginForm')) }}
-        Email: {{ Form::text(FieldType::EMAIL, 'demo@bumin.com.tr',  array('id' => 'fieldEmail')) }}  <br/>
-        Password: {{ Form::password(FieldType::PASSWORD,array('id' => 'fieldPassword')) }}  <br/>
-    {{ Form::submit() }}
-    {{ Form::close() }}
-
-    <br> email: demo@bumin.com.tr | sifrE: cjaiU8CV
-
     <div id="log"></div>
-
     @if ($errors->any())
         <div class="alert alert-danger">
             <ul>
@@ -28,5 +27,5 @@
 
 
 @section('title')
-    LOGIN PAGE
+    TRANSACTION REPORT
 @stop

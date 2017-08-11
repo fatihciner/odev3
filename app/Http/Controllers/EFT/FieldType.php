@@ -7,4 +7,6 @@ class FieldType
 	const EMAIL = 'email';
 	const PASSWORD = 'password';
 	const TOKEN = 'token';
+	const FROMDATE = 'fromDate';
+	const TODATE = 'toDate';
 }

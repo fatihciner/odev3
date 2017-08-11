@@ -32,7 +32,7 @@ class ApiField
 				[ FieldType::EMAIL => $data ],
 				[ FieldType::EMAIL => 'required|between:5,55' ]
 		);
-		return new ApiField(FieldType::EMAIL, 'email', $data, 'E-MAIL', '');
+		return new ApiField(FieldType::EMAIL, 'email', $data);
 
 	}
 
@@ -43,30 +43,38 @@ class ApiField
 			[ FieldType::PASSWORD => 'required|between:1,40' ]
 		);
 
-		return new ApiField(FieldType::PASSWORD, 'password', $data, 'PASSWORD', 'Must be between 3-50 chars');
+		return new ApiField(FieldType::PASSWORD, 'password', $data);
+	}
+
+
+	public static function fromDate($data = '')
+	{
+		self::validateFieldData(
+			[ FieldType::FROMDATE => $data ],
+			[ FieldType::FROMDATE => 'required|between:1,40' ]
+		);
+		return new ApiField(FieldType::FROMDATE, 'fromDate', $data);
+	}
+
+	public static function toDate($data = '')
+	{
+		self::validateFieldData(
+			[ FieldType::TODATE => $data ],
+			[ FieldType::TODATE => 'required|between:1,40' ]
+		);
+		return new ApiField(FieldType::TODATE, 'toDate', $data);
 	}
 
 	public static function test($data = '')
 	{
-
-
 		return new ApiField(FieldType::TOKEN, 'tokentest', $data, 'tokentest', '');
 	}
 
 
 	private static function validateFieldData($input=[], $rules=[])
 	{
-		$validator = Validator::make($input, $rules);
-		$validator->validate();
-
-
-//		if ($validator->fails())
-//		{
-//			//Redirect::back()->withErrors(['msg', 'The Message']);
-//			return  Redirect::back()->withInput()->withErrors($validator->errors());
-//		}
+		Validator::make($input, $rules)->validate();
 	}
-
 
 	public function getType()
 	{

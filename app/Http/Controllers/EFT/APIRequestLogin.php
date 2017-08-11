@@ -28,8 +28,8 @@ class APIRequestLogin extends APIRequest
 
 	public function doRun()
 	{
-		parent::doRun();
 		try {
+			parent::doRun();
 			$this->handleApiResponse()
 				->LogUser()
 				->handleSuccessfulAttempt();
@@ -49,7 +49,7 @@ class APIRequestLogin extends APIRequest
 		return $this;
 	}
 
-	protected function logUser()
+	private function logUser()
 	{
 		$userId = md5(
 				$this->getValidPostFields(APIRequest::fieldTypeNameRequired)['email'].
