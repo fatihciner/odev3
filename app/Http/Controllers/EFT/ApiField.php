@@ -58,6 +58,13 @@ class ApiField
 	{
 		$validator = Validator::make($input, $rules);
 		$validator->validate();
+
+
+//		if ($validator->fails())
+//		{
+//			//Redirect::back()->withErrors(['msg', 'The Message']);
+//			return  Redirect::back()->withInput()->withErrors($validator->errors());
+//		}
 	}
 
 

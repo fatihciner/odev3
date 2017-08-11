@@ -14,7 +14,6 @@
 
 <div class="container">
     <div id="main" class="row">
-        <!-- main content -->
         <div id="content" class="col">
             @yield('content')
         </div>

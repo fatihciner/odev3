@@ -1,15 +1,15 @@
 @extends('layouts.default')
+
 @section('content')
-    {{ Form::open() }}
-
-
-    Email: {{ Form::text(FieldType::EMAIL, 'demo@bumin.com.tr') }}  <br/>
-    Password: {{ Form::password(FieldType::PASSWORD) }}  <br/>
+    {{ Form::open(array('id' => 'loginForm')) }}
+        Email: {{ Form::text(FieldType::EMAIL, 'demo@bumin.com.tr',  array('id' => 'fieldEmail')) }}  <br/>
+        Password: {{ Form::password(FieldType::PASSWORD,array('id' => 'fieldPassword')) }}  <br/>
     {{ Form::submit() }}
     {{ Form::close() }}
 
     <br> email: demo@bumin.com.tr | sifrE: cjaiU8CV
 
+<div id="log"></div>
 
     @if ($errors->any())
         <div class="alert alert-danger">
@@ -21,6 +21,11 @@
         </div>
     @endif
 @stop
+
+@section('script_footer')
+    Odev.LoginHandler();
+@stop
+
 
 @section('title')
     LOGIN PAGE
