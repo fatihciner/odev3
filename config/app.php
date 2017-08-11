@@ -180,6 +180,10 @@ return [
 	    //formlar kaldırılmıs , onu ekledim : https://stackoverflow.com/questions/28753767/laravel-5-class-form-not-found
 	    Collective\Html\HtmlServiceProvider::class,
 
+	    //custom provider için
+	    App\Providers\CustomAuthProvider::class,
+	    //'App\Providers\CustomAuthProvider',
+
     ],
 
     /*
@@ -231,6 +235,7 @@ return [
 
 	    'Form' => Collective\Html\FormFacade::class,
 	    'Html' => Collective\Html\HtmlFacade::class,
+	    'FieldType' => App\Http\Controllers\EFT\FieldType::class
 
     ],
 

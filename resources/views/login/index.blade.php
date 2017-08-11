@@ -1,12 +1,13 @@
 {{ Form::open() }}
-LoginID: {{ Form::text('id') }}  <br/>
-Password: {{ Form::password('password') }}  <br/>
+LoginID: {{ Form::text(FieldType::EMAIL, 'demo@bumin.com.tr') }}  <br/>
+Password: {{ Form::password(FieldType::PASSWORD) }}  <br/>
 {{ Form::submit() }}
 {{ Form::close() }}
 
 form ile ilgili:
 http://laravel-recipes.com/categories/21
 http://laravel-recipes.com/recipes/171/creating-a-submit-button
+<br> email: demo@bumin.com.tr | sifrE: cjaiU8CV
 <hr>
 
 @if ($errors->any())
@@ -18,3 +19,5 @@ http://laravel-recipes.com/recipes/171/creating-a-submit-button
         </ul>
     </div>
 @endif
+
+
