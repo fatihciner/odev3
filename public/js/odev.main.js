@@ -1,6 +1,7 @@
+var allowSubmit = true;
 Odev = {
+
     LoginHandler: function() {
-        var allowSubmit = true;
         $("#loginForm" ).submit(function( event ) {
 
             event.preventDefault();
@@ -22,7 +23,7 @@ Odev = {
                 },
                 success: function (data) {
                     if(data.error) logDiv.html(data.error);
-                    else window.location.href = '/transaction/report';
+                    else window.location.href = '/transaction/list';
                 },
                 error: function (data) {
                     var errors = '';
@@ -38,17 +39,17 @@ Odev = {
                         {
                             allowSubmit = true;
                         },
-                        1000
+                        300
                     );
                 }
             });
         });
     },
-    PrintLoadingGif: function () {
+    PrintLoadingGif: function (large) {
+        if(large) return '<img src="/img/ajax-loader-large.gif">';
         return '<img src="/img/ajax-loader.gif">';
     },
     TransactionListClickBinder: function() {
-        var allowSubmit = true;
         $("#contentArea a" ).click(function( event ) {
             event.preventDefault();
             if(!$(this).is('a')) return;
@@ -97,25 +98,36 @@ Odev = {
                             allowSubmit = true;
                             logDiv.html('');
                         },
-                        1000
+                        300
                     );
                 }
             });
-
-
         });
     },
+    TransactionListSetPage: function(newPage){
+        if(!allowSubmit) return;
+        $('#fieldCurrentPage').val(newPage);
+        $("#reportForm" ).submit();
+    },
+    TransactionListPagination: function(mode) {
+        if(!allowSubmit) return;
+        if(!mode) return;
+        //var curPage = $('#fieldCurrentPage').val();
+        var curPage  = parseInt($('#current_page').html());
+        if(mode=='previous' && curPage > 1) curPage--;
+        else if(mode=='next') curPage++;
+        Odev.TransactionListSetPage(curPage);
+    },
     TransactionListRenew: function() {
-        var allowSubmit = true;
         $("#reportForm" ).submit(function( event ) {
             event.preventDefault();
             if(!allowSubmit) return;
-
             var form = $(this),
                 formdata = form.serializeArray(),
                 url = form.attr('action'),
                 logDiv = $('#log'),
-                contentArea = $('#contentArea');
+                contentArea = $('#contentArea'),
+                targetPage=$('#fieldCurrentPage').val();
 
             $.ajax({
                 url: url,
@@ -124,7 +136,7 @@ Odev = {
                 data: formdata,
                 beforeSend: function (data) {
                     allowSubmit = false;
-                    contentArea.html(Odev.PrintLoadingGif());
+                    contentArea.html(Odev.PrintLoadingGif(1));
                 },
                 success: function (data) {
                     if(data.error) logDiv.html(data.error);
@@ -139,11 +151,13 @@ Odev = {
                     logDiv.html(errors);
                 },
                 complete: function (data) {
+                    $('#fieldCurrentPage').val('1');
+                    $('#current_page').html(targetPage);
                     setTimeout( function()
                         {
                             allowSubmit = true;
                         },
-                        1000
+                        300
                     );
                 }
             });

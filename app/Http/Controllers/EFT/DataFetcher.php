@@ -12,7 +12,6 @@ class DataFetcher
 	public function getResponse($url, array $post_data = [],array $header_data = [])
 	{
 		$this->ch = curl_init($url);
-//dd($post_data);
 		if(!empty($post_data)) {
 			curl_setopt($this->ch, CURLOPT_POST, true);
 			curl_setopt($this->ch, CURLOPT_POSTFIELDS, http_build_query($post_data));
@@ -57,7 +56,7 @@ class DataFetcher
 //		rewind($verbose);
 //		$verboseLog = stream_get_contents($verbose);
 //		echo "Verbose information:\n<pre>", htmlspecialchars($verboseLog), "</pre>\n";
-//		$info = curl_getinfo($this->ch); dd($info);   //TODO <- curl infoya göre sonucu kontrol et. //$http_result = $info ['http_code'];
+//		$info = curl_getinfo($this->ch); dd($info);
 
 		if (is_resource($this->ch)) {
 			curl_close($this->ch);

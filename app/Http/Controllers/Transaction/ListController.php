@@ -17,7 +17,7 @@ class ListController extends Controller
 
 	public function index()
 	{
-		$this->request->request->add(['fromDate' => '2017-03-19', 'toDate' => '2017-07-20' , 'page' => 5]);
+		$this->request->request->add(['fromDate' => '2010-03-19', 'toDate' => '2017-08-12' , 'page' => 1]);
 		$result = $this->apiRequest->doRun()->getResult();
 		//dd($result);
 		return view('pages.transaction.list.index', [ 'result' => $result ] );

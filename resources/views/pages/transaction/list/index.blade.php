@@ -5,22 +5,20 @@
     <div class="row">
         <div class="col">
         {{ Form::open(array('id' => 'reportForm')) }}
-            from: {{ Form::text(FieldType::FROMDATE, array('id' => 'fieldFromDate')) }}
-            to: {{ Form::text(FieldType::TODATE, array('id' => 'fieldToDate')) }}
-            {{ Form::hidden(FieldType::PAGE, array('id' => 'fieldPage')) }}
+            From: {{ Form::text(FieldType::FROMDATE, '',  array('id' => 'fieldFromDate')) }}
+            To: {{ Form::text(FieldType::TODATE, '1',  array('id' => 'fieldToDate')) }}
+            {{-- {{ Form::hidden(FieldType::PAGE, '',  array('id' => 'fieldCurrentPage')) }} --}}
+            <input id="fieldCurrentPage" name="page" type="hidden" value="1">
             {{ Form::submit() }}
         {{ Form::close() }}
         </div>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
         <div class="col pull-right">
-            @if( $result['data']->current_page > 1 )
-                <button id="prevPage"  class="btn btn-small btn-alert">PREVIOUS PAGE</button>
-            @endif
-            CURRENT PAGE: {{ $result['data']->current_page or "1"}}
-            @if( $result['data']->current_page > 1 )
-                <button id="nextPage" class="btn" attr="{{$result['data']->next_page_url}}">NEXT PAGE</button>
-            @endif
+            <button onClick="Odev.TransactionListPagination('previous')" id="prevPage"  class="btn btn-small btn-alert">PREVIOUS PAGE</button>
+                CURRENT PAGE: <span id="current_page" alt="{{ $result['data']->current_page or "1"}}">{{ $result['data']->current_page or "1"}}</span>
+            <button onClick="Odev.TransactionListPagination('next')" id="nextPage" class="btn" attr="{{$result['data']->next_page_url}}">NEXT PAGE</button>
+
         </div>
     </div>
 

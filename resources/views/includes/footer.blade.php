@@ -1,4 +1,4 @@
-<div>Ödev  - Hazırlayan : Fatih Emre YILMAZ - [ 09.08.2017 ~ 11.08.2017 ]</div>
+<div> Ödev - 2017 </div>
 
 <script src="/js/vendor/jquery.min.js"></script>
 <script src="/js/vendor/bootstrap.min.js"></script>
