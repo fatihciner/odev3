@@ -24,6 +24,7 @@
 <div class="container">
     <div class="row">
         <div id="content" class="col">
+            @include('includes.modal')
             <hr>
             @include('includes.footer')
         </div>

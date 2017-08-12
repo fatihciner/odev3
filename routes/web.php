@@ -38,6 +38,11 @@ Route::middleware(['checkauth'])->group(function () {
 
 });
 
+Route::any('/', function () {
+	return view('pages.home');
+});
+
+
 //Route::resource('login', 'EFT\LoginController', ['only' => ['index', 'store']]);
 
 

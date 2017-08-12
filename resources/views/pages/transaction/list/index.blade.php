@@ -3,25 +3,31 @@
 @section('content')
 
     <div class="row">
-
+        <div class="col">
         {{ Form::open(array('id' => 'reportForm')) }}
             from: {{ Form::text(FieldType::FROMDATE, array('id' => 'fieldFromDate')) }}
             to: {{ Form::text(FieldType::TODATE, array('id' => 'fieldToDate')) }}
             {{ Form::hidden(FieldType::PAGE, array('id' => 'fieldPage')) }}
             {{ Form::submit() }}
         {{ Form::close() }}
-
+        </div>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <div class="pull-right">
+
+        <div class="col pull-right">
             @if( $result['data']->current_page > 1 )
-                <button id="prevPage"  class="btn">PREVIOUS PAGE</button>
+                <button id="prevPage"  class="btn btn-small btn-alert">PREVIOUS PAGE</button>
             @endif
             CURRENT PAGE: {{ $result['data']->current_page or "1"}}
             @if( $result['data']->current_page > 1 )
                 <button id="nextPage" class="btn" attr="{{$result['data']->next_page_url}}">NEXT PAGE</button>
             @endif
         </div>
-        <div id="log">{{ $result['error'] }}</div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div id="log">{{ $result['error'] }}</div>
+        </div>
     </div>
 
     <div class="row">
@@ -56,7 +62,7 @@
 
 
 
-    @include('includes.modal');
+
 
 
 

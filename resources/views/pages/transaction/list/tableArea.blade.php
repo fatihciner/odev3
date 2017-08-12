@@ -4,19 +4,19 @@
         <td class="transactionInfo">
             <a href="javascript:;" class="clickable" title="transaction">
                 {{ $transactionId  }}</span><br>
-                [ GET TRANSACTION DETAIL ]
+                <button type="button" class="btn btn-info btn-sm">GET TRANSACTION DETAIL</button>
             </a>
         </td>
         <td class="merchantInfo clickable" title="merchant">
             <a href="javascript:;" class="clickable" title="merchant">
                 {{ $report->merchant->name or ""  }} <br>
-                [ GET MERCHANT INFO ]
+                <button type="button" class="btn btn-info btn-sm">GET MERCHANT DETAIL</button>
             </a>
         </td>
         <td class="customerInfo">
             <a href="javascript:;" class="clickable" title="client">
                 {{ $report->customerInfo->billingFirstName or "" }} {{ $report->customerInfo->billingLastName or "" }}<br>
-                [ GET CLIENT INFO ]
+                <button type="button" class="btn btn-info btn-sm">GET CLIENT DETAIL</button>
             </a>
         </td>
         <td>
