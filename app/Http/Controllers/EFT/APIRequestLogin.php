@@ -8,45 +8,26 @@
 
 namespace App\Http\Controllers\EFT;
 
-
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Cache;
 use Session;
+//use Illuminate\Support\Facades\Log;
+//use Illuminate\Http\Request;
+
+//use Illuminate\Support\Facades\Auth;
+//use Illuminate\Support\Facades\Cache;
 
 class APIRequestLogin extends APIRequest
 {
 
-	protected $request;
 
-
-	public function __construct(Request $request)
+	public function initialize()
 	{
-		$this->request = $request;
-	}
-
-	public function doRun()
-	{
-		try {
-			parent::doRun();
-			$this->handleApiResponse()
-				->LogUser()
-				->handleSuccessfulAttempt();
-		} catch (\Exception $exception) {
-			Log::alert("kod: {$exception->getCode()} | mesaj: ".$exception->getMessage());
-			$this->handleUnsuccessfulAttempt();
-		}
+		//parent::doRun();
 		return $this;
 	}
 
 	protected function handleApiResponse()
 	{
-		$this->apiResponse = $this->getApiResponse();
-		if(empty($this->apiResponse->status) || $this->apiResponse->status != 'APPROVED') {
-			throw new \RuntimeException('Başarısız işlem, gonderilenler: '.$this->getApiEndPoint(). '|'.print_r($this->getValidPostFields(),true));
-		}
-		return $this;
+		return $this->LogUser();
 	}
 
 	private function logUser()
@@ -56,10 +37,12 @@ class APIRequestLogin extends APIRequest
 				$this->getValidPostFields(APIRequest::fieldTypeNameRequired)['password']
 		);
 
-		Cache::put(
+		$this->tokenTracker->set(
 			$userId,
-			$this->apiResponse->token,
-			env('API_TOKEN_EXPIRE_TIME_IN_MINUTES')
+			array_merge(
+				$this->getValidPostFields(),
+				['token' => $this->apiResponse->token]
+			)
 		);
 
 		Session::put(
@@ -100,5 +83,11 @@ class APIRequestLogin extends APIRequest
 	protected function getApiEndPoint()
 	{
 		return env('API_BASE_URL').'merchant/user/login';
+	}
+
+	protected function setHeaderData()
+	{
+		$this->header = [];
+		return $this;
 	}
 }

@@ -1,29 +1,23 @@
 <?php
 namespace App\Http\Controllers\EFT;
 
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 
 abstract class APIRequest
 {
-	protected $postFields;
-	protected $dataFetcher;
-	protected $request;
-	protected $apiResponse;
+	protected $request, $tokenTracker, $postFields, $apiResponse, $header;
 	private $result;
 
 	const fieldTypeNameRequired = 'required';
 	const fieldTypeNameOptional = 'optional';
 
-	/**
-	 * RequestHandler constructor.
-	 * @param $dataFetcher
-	 */
-	public function __construct(DataFetcher $dataFetcher,Request $request)
+	public function __construct(Request $request, TokenTracker $tokenTracker)
 	{
-		$this->dataFetcher = $dataFetcher;
+		$this->tokenTracker = $tokenTracker;
 		$this->request = $request;
-
 	}
+
 
 	protected function getPostFields($type='')
 	{
@@ -36,7 +30,6 @@ abstract class APIRequest
 			ARRAY_FILTER_USE_BOTH
 		);
 	}
-
 
 
 	protected function getValidPostFields()
@@ -52,19 +45,30 @@ abstract class APIRequest
 		return $validFields;
 	}
 
-
-	//abstract public function doRun();
 	abstract protected function setOptionalPostFields();
 	abstract protected function setRequiredPostFields();
 	abstract protected function handleApiResponse();
+	abstract protected function setHeaderData();
 	abstract protected function handleSuccessfulAttempt();
 	abstract protected function handleUnsuccessfulAttempt();
 	abstract protected function getApiEndPoint();
 
 
-	protected function doRun()
+	public function doRun()
 	{
 		$this->setPostFields();
+		try {
+			$this->initialize()
+				->setHeaderData()
+				->setApiResponse()
+				->checkApiResponse()
+				->handleApiResponse()
+				->handleSuccessfulAttempt();
+		} catch (\Exception $exception) {
+			Log::alert("kod: {$exception->getCode()} | mesaj: ".$exception->getMessage());
+			$this->handleUnsuccessfulAttempt();
+		}
+		return $this;
 	}
 
 	private function setPostFields()
@@ -73,18 +77,30 @@ abstract class APIRequest
 			self::fieldTypeNameRequired => $this->setRequiredPostFields(),
 			self::fieldTypeNameOptional => $this->setOptionalPostFields()
 		];
+		return $this;
 	}
 
-	protected function getApiResponse()
+	protected function setApiResponse()
 	{
 		$curl = new DataFetcher();
-		$response = $curl->getResponse($this->getApiEndPoint(),$this->getValidPostFields());
-		return $response;
-		/*$response = (object) [
-			'status' => 'ERROR',
-			'error_message' => 'Curl failed, err_msg : '. $exception->getCode().' , error: '.$exception->getMessage().
-				' posted data: '.$this->getApiEndPoint(). ' -  '.print_r($this->getValidPostFields(),true)
-		];*/
+		$this->apiResponse = $curl->getResponse(
+										$this->getApiEndPoint(),
+										$this->getValidPostFields(),
+										$this->header
+									);
+		return $this;
+	}
+
+	protected function checkApiResponse()
+	{
+		if(!empty($this->apiResponse->error) || empty($this->apiResponse->status) || $this->apiResponse->status != 'APPROVED') {
+			throw new \RuntimeException(
+				'Basarisiz islem|apiResponse:'.print_r($this->apiResponse,true).
+				'|gonderilenler: hedef:'.$this->getApiEndPoint().
+				'|'.print_r(array_merge($this->header,$this->getValidPostFields()),true)
+			);
+		}
+		return $this;
 	}
 
 	protected function setResult($error_message='Default Error', $data=[])

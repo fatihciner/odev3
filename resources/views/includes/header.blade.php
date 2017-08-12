@@ -7,17 +7,20 @@
         <div class="collapse navbar-collapse" id="navbarText">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item active">
-                    <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                    <a class="nav-link" href="/transaction/report">Transaction Report <span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Features</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Pricing</a>
+                    <a class="nav-link" href="/transaction/list">Transaction List</a>
                 </li>
             </ul>
             <span class="navbar-text">
-          Fatih Emre YILMAZ - 11.08.2017
+
+@if (Auth::check())
+    {{ Auth::user()['email'] }}
+@else
+    <a href="/login">LOGIN</a>
+@endif
+
         </span>
         </div>
     </div>

@@ -33,7 +33,7 @@ LoginHandler: function() {
             },
             success: function (data) {
                 if(data.error) logDiv.html(data.error);
-                else window.location.href = '/transaction/list';
+                else window.location.href = '/transaction/report';
             },
             error: function (data) {
                 var errors = '';
@@ -44,6 +44,7 @@ LoginHandler: function() {
             },
             complete: function (data) {
                 form.show();
+                console.log(data);
                 setTimeout( function()
                     {
                         allowSubmit = true;

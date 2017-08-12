@@ -24,10 +24,14 @@ class ReportController extends Controller
 
 	public function index()
 	{
-
 		$this->request->request->add(['fromDate' => '2015-07-01', 'toDate' => '2017-07-01' ]);
+		$result = json_decode($this->apiRequest->doRun()->getJsonResult());
+		return view('pages.transaction.report', [ 'result' => $result ] );
+	}
 
-		dd($result = $this->apiRequest->doRun()->getJsonResult());
-		return view('pages.transaction.report');
+	public function store()
+	{
+		$result = json_decode($this->apiRequest->doRun()->getJsonResult());
+		return view('pages.transaction.report', [ 'result' => $result ] );
 	}
 }

@@ -8,55 +8,32 @@ class DataFetcher
 	private $ch;
 
 
-	public function __construct()
+	//highly refactor etmek lazım :)
+	public function getResponse($url, array $post_data = [],array $header_data = [])
 	{
-//		foreach ($data as $key => $val) {
-//			curl_setopt($this->ch, $key, $val);
-//		}
-//
-//		curl_setopt($this->ch, CURLOPT_URL, $url);
-	}
-
-	public function getResponse($url, array $post_data = [])
-	{
-
-		//https://testreportingapi.clearsettle.com/api/v3/merchant/user/login?email=demo@bumin.com.tr&password=cjaiU8CV
-
-		//return $this->TestLogin();
-
-		/*$headers = array
-		(
-			'Accept: application/json',
-			'Accept-Language: ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-			'Accept-Encoding: gzip,deflate',
-			'Accept-Charset: windows-1251,utf-8;q=0.7,*;q=0.7',
-			'Content-Type: application/json',
-			'Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtZXJjaGFudFVzZXJJZCI6NTMsInJvbGUiOiJhZG1pbiIsIm1lcmNoYW50SWQiOjMsInN1Yk1lcmNoYW50SWRzIjpbMyw3NCw5MywxMTEsMTM3LDEzOCwxNDIsMTQ1LDE0NiwxNTMsMzM0LDE3NSwxODQsMjIwLDIyMSwyMjIsMjIzLDI5NCwzMjIsMzIzLDMyNywzMjksMzMwLDM0OSwzOTAsMzkxLDQ1NSw0NTYsNDc5LDQ4OCw1NjMsMTE0OSw1NzAsMTEzOCwxMTU2LDExNTcsMTE1OF0sInRpbWVzdGFtcCI6MTUwMjQ1MzMzNn0.NyJuuxqbNS0mIYPKD9J0tUNfx1H8L6nfhUp9k1O_wiM'
-		);*/
-		//$url = 'https://testreportingapi.clearsettle.com/api/v3/transactions/report';
-		//dd($post_data);
 		$this->ch = curl_init($url);
 
-//		$post_data = [ "email" => "demo@bumin.com.tr", "password" => "cjaiU8CV"];
-//		"email=demo%40bumin.com.tr&password=cjaiU8CV"
-//		"email=demo%40bumin.com.tr&password=cjaiU8CV"
-//		dd(http_build_query($post_data));
 		if(!empty($post_data)) {
 			curl_setopt($this->ch, CURLOPT_POST, true);
 			curl_setopt($this->ch, CURLOPT_POSTFIELDS, http_build_query($post_data));
 		}
 
 		$headers = array();
-		//$headers[] = 'Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtZXJjaGFudFVzZXJJZCI6NTMsInJvbGUiOiJhZG1pbiIsIm1lcmNoYW50SWQiOjMsInN1Yk1lcmNoYW50SWRzIjpbMyw3NCw5MywxMTEsMTM3LDEzOCwxNDIsMTQ1LDE0NiwxNTMsMzM0LDE3NSwxODQsMjIwLDIyMSwyMjIsMjIzLDI5NCwzMjIsMzIzLDMyNywzMjksMzMwLDM0OSwzOTAsMzkxLDQ1NSw0NTYsNDc5LDQ4OCw1NjMsMTE0OSw1NzAsMTEzOCwxMTU2LDExNTcsMTE1OF0sInRpbWVzdGFtcCI6MTUwMjQ1MzMzNn0.NyJuuxqbNS0mIYPKD9J0tUNfx1H8L6nfhUp9k1O_wiM';
 		$headers[] = 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8';
 		$headers[] = 'Accept-Encoding: gzip, deflate';
 		$headers[] = 'Accept-Language: en-US,en;q=0.5';
 		$headers[] = 'Cache-Control: no-cache';
 		$headers[] = 'Content-Type: application/x-www-form-urlencoded; charset=utf-8';
 		//$headers[] = 'Host: 202.71.152.126';
-		//$headers[] = 'Referer: http://www.example.com/index.php'; //Your referrer address
+		//$headers[] = 'Referer: http://www.google.com';
 		$headers[] = 'User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:28.0) Gecko/20100101 Firefox/28.0';
 		//$headers[] = 'X-MicrosoftAjax: Delta=true';
+
+		if(!empty($header_data)) {
+			foreach($header_data AS $node=>$value) {
+				$headers[] = "{$node}: {$value}";
+			}
+		}
 
 		curl_setopt($this->ch, CURLOPT_HTTPHEADER, $headers);
 		curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, true);
@@ -67,7 +44,7 @@ class DataFetcher
 		curl_setopt($this->ch, CURLOPT_CONNECTTIMEOUT, 0);
 		curl_setopt($this->ch, CURLOPT_TIMEOUT, 50);
 
-		//debuggin..
+//debuggin..
 //		curl_setopt($this->ch, CURLINFO_HEADER_OUT, true);
 //		$verbose = fopen('php://temp', 'w+');
 //		curl_setopt($this->ch, CURLOPT_VERBOSE, true);
@@ -77,7 +54,6 @@ class DataFetcher
 		$error_message   = curl_error($this->ch);
 		$error_no    = curl_errno($this->ch);
 
-		//dd($response);
 
 //		rewind($verbose);
 //		$verboseLog = stream_get_contents($verbose);
@@ -93,15 +69,5 @@ class DataFetcher
 		}
 		return json_decode($response);
 	}
-
-	private  function TestLogin() {
-		return json_encode(
-			[
-				'token' => 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtZXJjaGFudFVzZXJJZCI6MSwicm9sZSI6ImFkbWluIiwi',
-				'status' => 'APPROVED'
-			]
-		);
-	}
-
 
 }

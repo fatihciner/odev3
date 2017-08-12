@@ -8,40 +8,40 @@
 namespace App\Http\Controllers\EFT;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class APIRequestReport extends APIRequest
 {
-	protected $request;
-
-	public function __construct(Request $request)
+	public function __construct(Request $request, TokenTracker $tokenTracker)
 	{
+		$this->tokenTracker = $tokenTracker;
 		$this->request = $request;
 	}
 
-	public function doRun()
+	public function initialize()
 	{
-		try {
-			parent::doRun();
-			$this->handleApiResponse()
-				->handleSuccessfulAttempt();
-		} catch (\Exception $exception) {
-			Log::alert("kod: {$exception->getCode()} | mesaj: ".$exception->getMessage());
-			$this->handleUnsuccessfulAttempt();
-		}
+		return $this;
+	}
+
+	protected function setHeaderData()
+	{
+		$this->header = [
+			'Authorization' => $this->tokenTracker->get()
+		];
 		return $this;
 	}
 
 	protected function handleApiResponse()
 	{
-		$this->apiResponse = $this->getApiResponse();
-		if(empty($this->apiResponse->status) || $this->apiResponse->status != 'APPROVED') {
-			throw new \RuntimeException(
-				'Basarisiz islem|apiResponse:'.print_r($this->apiResponse,true).
-				'|gonderilenler: '.$this->getApiEndPoint().
-				'|'.print_r($this->getValidPostFields(),true)
+		$this->apiResponse = array_map(
+				function($response){
+					return [
+						'count' => $response->total,
+						'total' => $response->total,
+						'currency' => $response->currency
+					];
+				},
+				$this->apiResponse->response
 			);
-		}
 		return $this;
 	}
 

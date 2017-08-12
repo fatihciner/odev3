@@ -34,22 +34,30 @@ class CustomUserProvider  implements UserProvider {
 	}
 
 	public function user() {
-		//TODO: sessiondan user bilgilerini dön
 		return session('userData');
+	}
+
+	public function userData($type='') {
+		if(Session::has('userData')) {
+			foreach($this->user() AS $key=>$value) {
+				if ($type == $key) return $value;
+			}
+		}
+		return '';
 	}
 
 	public function check()
 	{
-		return Session::has('userData');
+		if(!Session::has('userData')) return false;
+		$cachedData = Cache::get($this->userData('id'));
+		if(empty($cachedData) || empty($cachedData['email']) || empty($cachedData['password'])) {
+			return false;
+		}
+		return true;
 	}
 
-	public function getApiToken()
-	{
-		//TODO: sessionda veya cachede token bilgileri yoksa "ApiTokenExpired" exception at, ona groe catche cagiran yerlerden
-		if(!$this->check()) return '';
-		//return Cache::has($this->user()['id']) ?  : '';
-		return Cache::get($this->user()['id'],'');  //TODO: exception at eger cachede yok ise!
-	}
+
+
 
 
 
