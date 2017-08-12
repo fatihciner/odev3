@@ -19,21 +19,11 @@ class ApiField
 
 	public static function email($data = '')
 	{
-
-//		$validator = Validator::make();
-//		$validator->after(function ($validator)  use ($email){
-//			if ($email!='24234')
-//			{
-//				$validator->errors()->add('field', 'Giriş Bilgileri Geçersizzzzz!');
-//			}
-//		})->validate();
-
 		self::validateFieldData(
 				[ FieldType::EMAIL => $data ],
-				[ FieldType::EMAIL => 'required|between:5,55' ]
+				[ FieldType::EMAIL => 'required|between:1,40' ]
 		);
 		return new ApiField(FieldType::EMAIL, 'email', $data);
-
 	}
 
 	public static function password($data = '')
@@ -83,13 +73,6 @@ class ApiField
 		return new ApiField(FieldType::PAGE, 'page', $data);
 	}
 
-
-	public static function test($data = '')
-	{
-		return new ApiField(FieldType::TOKEN, 'tokentest', $data, 'tokentest', '');
-	}
-
-
 	private static function validateFieldData($input=[], $rules=[])
 	{
 		Validator::make($input, $rules)->validate();
@@ -104,9 +87,7 @@ class ApiField
 	{
 		return $this->value;
 	}
-	/**
-	 * @return string
-	 */
+
 	public function getName()
 	{
 		return $this->name;

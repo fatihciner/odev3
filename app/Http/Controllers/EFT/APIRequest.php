@@ -18,7 +18,6 @@ abstract class APIRequest
 		$this->request = $request;
 	}
 
-
 	protected function getPostFields($type='')
 	{
 		return array_filter (
@@ -30,7 +29,6 @@ abstract class APIRequest
 			ARRAY_FILTER_USE_BOTH
 		);
 	}
-
 
 	protected function getValidPostFields()
 	{
@@ -52,23 +50,35 @@ abstract class APIRequest
 	abstract protected function handleSuccessfulAttempt();
 	abstract protected function handleUnsuccessfulAttempt();
 	abstract protected function getApiEndPoint();
+	abstract protected function initialize();
 
 
 	public function doRun()
 	{
 
-		//try {
-			$this->setPostFields()
-				->initialize()
-				->setHeaderData()
-				->setApiResponse()
-				->checkApiResponse()
-				->handleApiResponse()
-				->handleSuccessfulAttempt();
-//		} catch (\Exception $exception) {
-//			Log::alert("kod: {$exception->getCode()} | mesaj: ".$exception->getMessage());
-//			$this->handleUnsuccessfulAttempt();
-//		}
+		// * isareti ile isaretlenmis alari her bir cagrilan class ilgili api end pointine gore kendi i$lerini yapar
+		// (her class veya endpoint in istegi davranisi farkli olabileceginden)
+		// gerisi merkezi abstract class tarafindan handle edilir (hafif monolitik oldu - refactor edilebilir)
+		// single responsibility icin bir kisim metodlari kendi classlarina ayirmak daiyi bir refctoring olabilir.
+		// bir diger yapilmasi gerken de her bir islemin kendi ozel exceptionuu atmasi gerekiyor. simdilik ben
+		// hepsini tek bir exception turu altinda  catch ediyorum  : )
+
+		try {
+
+			$this->setPostFields()				//apiye gidecek inputlar varsa onlari duzenler
+				->initialize()					// * apiye cagri atmadan once gereken duzenlemeleri yapar
+				->setHeaderData()				// * apiye gidecek header degerleri varsa onlari duzenler
+				->setApiResponse()				//apiden gelen sonuc var mi varsa onu kullanmamizi saglar
+				->checkApiResponse()			//apiden gelen sonuclari analiz eder
+				->handleApiResponse()			// * api den donen sonuclari duzenler - api node isimlerini kendi isimlerimiz ile degistirir
+				->handleSuccessfulAttempt();	// *basarili islemler sonu her bir class kendi basarili islemler sonunda ne yapmak isterse onu yapabilir
+
+		} catch (\Exception $exception) {
+
+			Log::alert("kod: {$exception->getCode()} | mesaj: ".$exception->getMessage());
+			$this->handleUnsuccessfulAttempt();	// * basarisiz islemler sonu neler yapilacak ise onlar yapilir
+
+		}
 		return $this;
 	}
 
@@ -117,13 +127,14 @@ abstract class APIRequest
 	{
 		return json_encode($this->result);
 	}
+
 	public function getResult()
 	{
 		return $this->result;
 	}
+
 	public function getHTMLResult($dataName='data',$viewName='')
 	{
-		//dd($this->result);
 		return view($viewName, [ $dataName => $this->result ] )->render();
 	}
 }
