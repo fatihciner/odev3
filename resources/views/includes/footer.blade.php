@@ -73,8 +73,8 @@ TransactionListClickBinder: function() {
             myModalTitleText = '';
 
         if(elementType == 'transaction')  { url = '/transaction/'; myModalTitleText = 'Transaction Details' }
-        if(elementType == 'merchant') { url = '/merchant/'; myModalTitleText = 'Merchant Details' }
-        if(elementType == 'client') { url = '/client/'; myModalTitleText = 'Client Details' }
+        if(elementType == 'merchant') { url = '/transaction/merchant/'; myModalTitleText = 'Merchant Details' }
+        if(elementType == 'client') { url = '/transaction/client/'; myModalTitleText = 'Client Details' }
         url += transactionId;
 
         $.ajax({

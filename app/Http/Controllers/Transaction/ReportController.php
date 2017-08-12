@@ -5,7 +5,7 @@
  * Date: 12.08.2017
  * Time: 00:49
  */
-namespace app\Http\Controllers\Transactions;
+namespace App\Http\Controllers\Transaction;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\EFT\APIRequestReport;

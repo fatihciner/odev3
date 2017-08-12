@@ -31,6 +31,12 @@ Route::prefix('transaction')->middleware(['checkauth'])->group(function () {
 
 });
 
+Route::middleware(['checkauth'])->group(function () {
+
+	Route::get('merchant/{transactionId}', 'MerchantDetailController@show');
+	Route::get('client/{transactionId}', 'ClientDetailController@show');
+
+});
 
 //Route::resource('login', 'EFT\LoginController', ['only' => ['index', 'store']]);
 

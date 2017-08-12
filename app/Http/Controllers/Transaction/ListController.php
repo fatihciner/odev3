@@ -1,5 +1,5 @@
 <?php
-namespace app\Http\Controllers\Transactions;
+namespace App\Http\Controllers\Transaction;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\EFT\APIRequestList;
