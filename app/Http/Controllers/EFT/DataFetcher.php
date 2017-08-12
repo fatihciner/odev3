@@ -12,7 +12,7 @@ class DataFetcher
 	public function getResponse($url, array $post_data = [],array $header_data = [])
 	{
 		$this->ch = curl_init($url);
-
+//dd($post_data);
 		if(!empty($post_data)) {
 			curl_setopt($this->ch, CURLOPT_POST, true);
 			curl_setopt($this->ch, CURLOPT_POSTFIELDS, http_build_query($post_data));
@@ -53,7 +53,6 @@ class DataFetcher
 		$response = curl_exec($this->ch);
 		$error_message   = curl_error($this->ch);
 		$error_no    = curl_errno($this->ch);
-
 
 //		rewind($verbose);
 //		$verboseLog = stream_get_contents($verbose);

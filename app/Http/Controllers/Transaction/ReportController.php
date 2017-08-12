@@ -13,7 +13,6 @@ use Illuminate\Http\Request;
 
 class ReportController extends Controller
 {
-
 	private $request,$apiRequest;
 
 	public function __construct(Request $request, APIRequestReport $apiRequest)

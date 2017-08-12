@@ -3,12 +3,12 @@
  * Created by PhpStorm.
  * User: fyilmaz
  * Date: 12.08.2017
- * Time: 00:56
+ * Time: 14:04
  */
+
 namespace App\Http\Controllers\EFT;
 
-
-class APIRequestReport extends APIRequest
+class APIRequestTransactionDetail extends APIRequest
 {
 
 	public function initialize()
@@ -26,22 +26,12 @@ class APIRequestReport extends APIRequest
 
 	protected function handleApiResponse()
 	{
-		$this->apiResponse = array_map(
-				function($response){
-					return [
-						'count' => $response->total,
-						'total' => $response->total,
-						'currency' => $response->currency
-					];
-				},
-				$this->apiResponse->response
-			);
 		return $this;
 	}
 
 	protected function handleUnsuccessfulAttempt()
 	{
-		return $this->setResult('Bakmak istediğiniz aralıgı genisletin', []);
+		return $this->setResult('Aradiginiz transaction bulunamadi', []);
 	}
 
 	protected function handleSuccessfulAttempt()
@@ -51,19 +41,18 @@ class APIRequestReport extends APIRequest
 
 	protected function setOptionalPostFields()
 	{
-		return  [];
+		return [];
 	}
 
 	protected function setRequiredPostFields()
 	{
 		return  [
-			ApiField::fromDate($this->request->input(FieldType::FROMDATE)),
-			ApiField::toDate($this->request->input(FieldType::TODATE))
+			ApiField::transactionId($this->request->{FieldType::TRANSACTIONID})
 		];
 	}
 
 	protected function getApiEndPoint()
 	{
-		return env('API_BASE_URL').'transactions/report';
+		return env('API_BASE_URL').'transaction';
 	}
 }

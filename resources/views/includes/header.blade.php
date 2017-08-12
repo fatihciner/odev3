@@ -12,6 +12,10 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/transaction/list">Transaction List</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/transaction/877123-1490085088-479">Transaction Detail</a>
+                </li>
+
             </ul>
             <span class="navbar-text">
 

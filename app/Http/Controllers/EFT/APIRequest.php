@@ -56,18 +56,19 @@ abstract class APIRequest
 
 	public function doRun()
 	{
-		$this->setPostFields();
-		try {
-			$this->initialize()
+
+		//try {
+			$this->setPostFields()
+				->initialize()
 				->setHeaderData()
 				->setApiResponse()
 				->checkApiResponse()
 				->handleApiResponse()
 				->handleSuccessfulAttempt();
-		} catch (\Exception $exception) {
-			Log::alert("kod: {$exception->getCode()} | mesaj: ".$exception->getMessage());
-			$this->handleUnsuccessfulAttempt();
-		}
+//		} catch (\Exception $exception) {
+//			Log::alert("kod: {$exception->getCode()} | mesaj: ".$exception->getMessage());
+//			$this->handleUnsuccessfulAttempt();
+//		}
 		return $this;
 	}
 
@@ -93,7 +94,7 @@ abstract class APIRequest
 
 	protected function checkApiResponse()
 	{
-		if(!empty($this->apiResponse->error) || empty($this->apiResponse->status) || $this->apiResponse->status != 'APPROVED') {
+		if(!empty($this->apiResponse->error) || (!empty($this->apiResponse->status) && $this->apiResponse->status != 'APPROVED') )  {
 			throw new \RuntimeException(
 				'Basarisiz islem|apiResponse:'.print_r($this->apiResponse,true).
 				'|gonderilenler: hedef:'.$this->getApiEndPoint().
@@ -118,7 +119,11 @@ abstract class APIRequest
 	}
 	public function getResult()
 	{
-		return json_encode($this->result);
+		return $this->result;
 	}
-
+	public function getHTMLResult($dataName='data',$viewName='')
+	{
+		//dd($this->result);
+		return view($viewName, [ $dataName => $this->result ] )->render();
+	}
 }

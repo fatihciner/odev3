@@ -1,19 +1,19 @@
 <?php
+namespace App\Http\Controllers\EFT;
 /**
  * Created by PhpStorm.
  * User: fyilmaz
  * Date: 12.08.2017
- * Time: 00:56
+ * Time: 07:03
  */
-namespace App\Http\Controllers\EFT;
 
 
-class APIRequestReport extends APIRequest
+class APIRequestList extends APIRequest
 {
-
 	public function initialize()
 	{
 		return $this;
+
 	}
 
 	protected function setHeaderData()
@@ -26,22 +26,21 @@ class APIRequestReport extends APIRequest
 
 	protected function handleApiResponse()
 	{
+		/*bu veri karışık imiş, burayı düzenlemek için özel calışmak lazım. simdilik birakiyorum.
 		$this->apiResponse = array_map(
-				function($response){
-					return [
-						'count' => $response->total,
-						'total' => $response->total,
-						'currency' => $response->currency
-					];
-				},
-				$this->apiResponse->response
-			);
+			function($response){
+				return [
+					'per_page' => $response->per_page,
+				];
+			},
+			$this->apiResponse
+		);*/
 		return $this;
 	}
 
 	protected function handleUnsuccessfulAttempt()
 	{
-		return $this->setResult('Bakmak istediğiniz aralıgı genisletin', []);
+		return $this->setResult('Bakmak istediğiniz aralığı genişletin', []);
 	}
 
 	protected function handleSuccessfulAttempt()
@@ -58,12 +57,13 @@ class APIRequestReport extends APIRequest
 	{
 		return  [
 			ApiField::fromDate($this->request->input(FieldType::FROMDATE)),
-			ApiField::toDate($this->request->input(FieldType::TODATE))
+			ApiField::toDate($this->request->input(FieldType::TODATE)),
+			ApiField::page($this->request->input(FieldType::PAGE))
 		];
 	}
 
 	protected function getApiEndPoint()
 	{
-		return env('API_BASE_URL').'transactions/report';
+		return env('API_BASE_URL').'transaction/list';
 	}
 }

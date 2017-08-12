@@ -56,6 +56,15 @@ class ApiField
 		return new ApiField(FieldType::FROMDATE, 'fromDate', $data);
 	}
 
+	public static function transactionId($data = '')
+	{
+		self::validateFieldData(
+			[ FieldType::TRANSACTIONID => $data ],
+			[ FieldType::TRANSACTIONID=> 'required|between:1,40' ]
+		);
+		return new ApiField(FieldType::PASSWORD, 'transactionId', $data);
+	}
+
 	public static function toDate($data = '')
 	{
 		self::validateFieldData(
@@ -64,6 +73,16 @@ class ApiField
 		);
 		return new ApiField(FieldType::TODATE, 'toDate', $data);
 	}
+
+	public static function page($data = '')
+	{
+		self::validateFieldData(
+			[ FieldType::PAGE => $data ],
+			[ FieldType::PAGE => 'required|between:1,400' ]
+		);
+		return new ApiField(FieldType::PAGE, 'page', $data);
+	}
+
 
 	public static function test($data = '')
 	{

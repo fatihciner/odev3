@@ -9,4 +9,6 @@ class FieldType
 	const TOKEN = 'token';
 	const FROMDATE = 'fromDate';
 	const TODATE = 'toDate';
+	const PAGE = 'page';
+	const TRANSACTIONID = 'transactionId';
 }
