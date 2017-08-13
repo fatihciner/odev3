@@ -63,7 +63,7 @@ abstract class APIRequest
 		// bir diger yapilmasi gerken de her bir islemin kendi ozel exceptionuu atmasi gerekiyor. simdilik ben
 		// hepsini tek bir exception turu altinda  catch ediyorum  : )
 
-		try {
+//		try {
 
 			$this->setPostFields()				//apiye gidecek inputlar varsa onlari duzenler
 				->initialize()					// * apiye cagri atmadan once gereken duzenlemeleri yapar
@@ -73,12 +73,12 @@ abstract class APIRequest
 				->handleApiResponse()			// * api den donen sonuclari duzenler - api node isimlerini kendi isimlerimiz ile degistirir
 				->handleSuccessfulAttempt();	// *basarili islemler sonu her bir class kendi basarili islemler sonunda ne yapmak isterse onu yapabilir
 
-		} catch (\Exception $exception) {
-
-			Log::alert("kod: {$exception->getCode()} | mesaj: ".$exception->getMessage());
-			$this->handleUnsuccessfulAttempt();	// * basarisiz islemler sonu neler yapilacak ise onlar yapilir
-
-		}
+//		} catch (\Exception $exception) {
+//
+//			Log::alert("kod: {$exception->getCode()} | mesaj: ".$exception->getMessage());
+//			$this->handleUnsuccessfulAttempt();	// * basarisiz islemler sonu neler yapilacak ise onlar yapilir
+//
+//		}
 		return $this;
 	}
 

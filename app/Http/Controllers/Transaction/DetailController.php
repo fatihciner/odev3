@@ -25,10 +25,12 @@ class DetailController extends Controller
 	{
 
 		//http://odev.my/transaction/877123-1490085088-479
-		return $result = $this->apiRequest->doRun()->getHTMLResult('result','pages.transaction.detail');
+		//return $result = $this->apiRequest->doRun()->getHTMLResult('result','pages.transaction.detail');
 
-
-		//'htmlFormattedContentArea'=>view('pages.transaction.list.tableArea', [ 'result' => $result ] )->render()
-		//return view('pages.transaction.list.tableArea', ['result' => $result]);
+		$result = $this->apiRequest->doRun()->getResult();
+		return array_merge(
+				$result,
+				['htmlFormattedContentArea'=>view('pages.transaction.detail', [ 'result' => $result ] )->render()]
+		);
 	}
 }

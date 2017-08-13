@@ -50,7 +50,10 @@ Odev = {
         return '<img src="/img/ajax-loader.gif">';
     },
     TransactionListClickBinder: function() {
-        $("#contentArea a" ).click(function( event ) {
+
+        //$(document).on("click", "#contentArea", function(){
+        //$("#contentArea a" ).click(function( event ) {
+        $("#contentArea").delegate('a', 'click', function(event){
             event.preventDefault();
             if(!$(this).is('a')) return;
             if(!allowSubmit) return;
@@ -62,7 +65,7 @@ Odev = {
                 logDiv = $('#log'),
                 url = '',
                 myModalTitleText = '';
-
+//console.log(transactionId);
             if(elementType == 'transaction')  { url = '/transaction/'; myModalTitleText = 'Transaction Details' }
             if(elementType == 'merchant') { url = '/merchant/'; myModalTitleText = 'Merchant Details' }
             if(elementType == 'client') { url = '/client/'; myModalTitleText = 'Client Details' }
@@ -71,18 +74,18 @@ Odev = {
             $.ajax({
                 url: url,
                 type: 'GET',
-                dataType: 'html',
+                dataType: 'json',
                 beforeSend: function (data) {
                     allowSubmit = false;
                     logDiv.html(Odev.PrintLoadingGif());
                 },
                 success: function (data) {
-                    //if(data.error) logDiv.html(data.error);
-                    //else  {
-                    myModalTitle.html(myModalTitleText);
-                    myModalBody.html(data);
-                    myModal.modal('show');
-                    //} //logDiv.html(data.htmlFormattedContentArea);
+                    if(data.error) logDiv.html(data.error).addClass('alert alert-danger');
+                    else  {
+                        myModalTitle.html(myModalTitleText);
+                        myModalBody.html(data.htmlFormattedContentArea);
+                        myModal.modal('show');
+                    }
                 },
                 error: function (data) {
                     var errors = '';
@@ -90,15 +93,15 @@ Odev = {
                         errors += data.responseJSON[datum] + '<br>';
                     }
                     console.log(errors);
-                    logDiv.html(errors);
+                    logDiv.html(errors).addClass('alert alert-danger');
                 },
                 complete: function (data) {
                     setTimeout( function()
                         {
                             allowSubmit = true;
-                            logDiv.html('');
+                            logDiv.html('').removeClass('alert alert-danger');;
                         },
-                        300
+                        1000
                     );
                 }
             });
@@ -113,9 +116,11 @@ Odev = {
         if(!allowSubmit) return;
         if(!mode) return;
         //var curPage = $('#fieldCurrentPage').val();
-        var curPage  = parseInt($('#current_page').html());
-        if(mode=='previous' && curPage > 1) curPage--;
-        else if(mode=='next') curPage++;
+        var curPage  = $('#current_page').html();
+        if(curPage != parseInt(curPage)) { curPage=1; $('#current_page').html('1'); return;}
+        if(mode=='next') curPage++;
+        else if(mode=='previous' && curPage > 1) curPage--;
+        else return;
         Odev.TransactionListSetPage(curPage);
     },
     TransactionListRenew: function() {
@@ -127,7 +132,8 @@ Odev = {
                 url = form.attr('action'),
                 logDiv = $('#log'),
                 contentArea = $('#contentArea'),
-                targetPage=$('#fieldCurrentPage').val();
+                targetPage=$('#fieldCurrentPage').val(),
+                currenContentArea;
 
             $.ajax({
                 url: url,
@@ -136,11 +142,15 @@ Odev = {
                 data: formdata,
                 beforeSend: function (data) {
                     allowSubmit = false;
+                    currenContentArea = contentArea.html();
                     contentArea.html(Odev.PrintLoadingGif(1));
                 },
                 success: function (data) {
                     if(data.error) logDiv.html(data.error);
-                    else contentArea.html(data.htmlFormattedContentArea);
+                    else {
+                        contentArea.html(data.htmlFormattedContentArea);
+                        $('#current_page').html(targetPage);
+                    }
                 },
                 error: function (data) {
                     var errors = '';
@@ -148,11 +158,12 @@ Odev = {
                         errors += data.responseJSON[datum] + '<br>';
                     }
                     console.log(errors);
-                    logDiv.html(errors);
+                    contentArea.html(currenContentArea);
+                    logDiv.html(errors).addClass('alert alert-danger');
+
                 },
                 complete: function (data) {
                     $('#fieldCurrentPage').val('1');
-                    $('#current_page').html(targetPage);
                     setTimeout( function()
                         {
                             allowSubmit = true;

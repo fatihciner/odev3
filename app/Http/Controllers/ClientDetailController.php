@@ -25,7 +25,12 @@ class ClientDetailController extends Controller
 	public function show($transactionId)
 	{
 		//http://odev.my//client/877123-1490085088-479
-		return $result = $this->apiRequest->doRun()->getHTMLResult('result','pages.transaction.detail');
+		//return $result = $this->apiRequest->doRun()->getHTMLResult('result','pages.transaction.detail');
+		$result = $this->apiRequest->doRun()->getResult();
+		return array_merge(
+			$result,
+			['htmlFormattedContentArea'=>view('pages.transaction.detail', [ 'result' => $result ] )->render()]
+		);
 
 	}
 }

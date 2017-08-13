@@ -21,7 +21,7 @@ class ApiField
 	{
 		self::validateFieldData(
 				[ FieldType::EMAIL => $data ],
-				[ FieldType::EMAIL => 'required|between:1,40' ]
+				[ FieldType::EMAIL => 'required|between:1,40|email' ]
 		);
 		return new ApiField(FieldType::EMAIL, 'email', $data);
 	}
@@ -30,7 +30,7 @@ class ApiField
 	{
 		self::validateFieldData(
 			[ FieldType::PASSWORD => $data ],
-			[ FieldType::PASSWORD => 'required|between:1,40' ]
+			[ FieldType::PASSWORD => 'required|between:1,40|alpha_dash' ]
 		);
 
 		return new ApiField(FieldType::PASSWORD, 'password', $data);
@@ -41,34 +41,34 @@ class ApiField
 	{
 		self::validateFieldData(
 			[ FieldType::FROMDATE => $data ],
-			[ FieldType::FROMDATE => 'required|between:1,40' ]
+			[ FieldType::FROMDATE => 'required|between:1,10|date' ]
 		);
 		return new ApiField(FieldType::FROMDATE, 'fromDate', $data);
-	}
-
-	public static function transactionId($data = '')
-	{
-		self::validateFieldData(
-			[ FieldType::TRANSACTIONID => $data ],
-			[ FieldType::TRANSACTIONID=> 'required|between:1,40' ]
-		);
-		return new ApiField(FieldType::PASSWORD, 'transactionId', $data);
 	}
 
 	public static function toDate($data = '')
 	{
 		self::validateFieldData(
 			[ FieldType::TODATE => $data ],
-			[ FieldType::TODATE => 'required|between:1,40' ]
+			[ FieldType::TODATE => 'required|between:1,10|date' ]
 		);
 		return new ApiField(FieldType::TODATE, 'toDate', $data);
+	}
+
+	public static function transactionId($data = '')
+	{
+		self::validateFieldData(
+			[ FieldType::TRANSACTIONID => $data ],
+			[ FieldType::TRANSACTIONID=> 'required|between:1,20|alpha_dash' ]
+		);
+		return new ApiField(FieldType::PASSWORD, 'transactionId', $data);
 	}
 
 	public static function page($data = '')
 	{
 		self::validateFieldData(
 			[ FieldType::PAGE => $data ],
-			[ FieldType::PAGE => 'required|between:1,400' ]
+			[ FieldType::PAGE => 'required|between:1,400|integer' ]
 		);
 		return new ApiField(FieldType::PAGE, 'page', $data);
 	}
