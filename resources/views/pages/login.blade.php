@@ -1,6 +1,7 @@
 @extends('layouts.default')
 
 @section('content')
+    <!--<h2>Login Page</h2>-->
     {{ Form::open(array('id' => 'loginForm')) }}
         Email: {{ Form::text(FieldType::EMAIL, 'demo@bumin.com.tr',  array('id' => 'fieldEmail')) }}  <br/>
         Password: {{ Form::password(FieldType::PASSWORD,array('id' => 'fieldPassword')) }}  <br/>

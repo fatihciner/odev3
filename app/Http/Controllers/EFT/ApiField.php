@@ -59,7 +59,7 @@ class ApiField
 	{
 		self::validateFieldData(
 			[ FieldType::TRANSACTIONID => $data ],
-			[ FieldType::TRANSACTIONID=> 'required|between:1,20|alpha_dash' ]
+			[ FieldType::TRANSACTIONID=> 'required|between:1,32|alpha_dash' ]
 		);
 		return new ApiField(FieldType::PASSWORD, 'transactionId', $data);
 	}

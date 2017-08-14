@@ -48,6 +48,7 @@ class CustomUserProvider  implements UserProvider {
 
 	public function check()
 	{
+		//return false;
 		if(!Session::has('userData')) return false;
 		$cachedData = Cache::get($this->userData('id'));
 		if(empty($cachedData) || empty($cachedData['email']) || empty($cachedData['password'])) {

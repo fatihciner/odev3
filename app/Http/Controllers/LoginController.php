@@ -28,40 +28,12 @@ class LoginController extends Controller
 	}
 
 
+
+
+
+
 	//<editor-fold defaultstate="collapsed" desc="ıvır zıvır denemeler yapmıştım bakmayın hiç :) ">
-	private function testlersil() {
-		$validator = Validator::make(
-			$request->all(),
-			[
-				'id' => 'required|between:1,5',
-				'password' => 'required|between:1,5'
-			]
-		);
-		$validator->validate();
 
-		//dd($this->getMessageBag());
-		//dd($validator);
-		$validator->after(function ($validator)  use ($request){
-			if (!Auth::attempt(['id' => $request->id, 'password' => $request->password]))
-			{
-				$validator->errors()->add('field', 'Giriş Bilgileri Geçersiz!');
-			}
-		})->validate();
-
-		if ($validator->fails()) {
-			//dd($validator->errors());
-			return redirect()->back()->withInput(Request::except('password'))->withErrors($validator);
-		}
-//		dd("ALL OK");
-//		if (Auth::attempt(['id' => $request->id, 'password' => $request->password]))
-//		{
-//			//$validator->getMessageBag()->add('password', 'Password wrong');
-////			dd(Auth::user());
-////			dd("logged in");
-//		}
-		//dd(Auth::check());
-		//dd(Auth::check());
-	}
 	//</editor-fold>
 
 

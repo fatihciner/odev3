@@ -3,6 +3,7 @@ namespace App\Http\Controllers\EFT;
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 abstract class APIRequest
 {
@@ -63,7 +64,7 @@ abstract class APIRequest
 		// bir diger yapilmasi gerken de her bir islemin kendi ozel exceptionuu atmasi gerekiyor. simdilik ben
 		// hepsini tek bir exception turu altinda  catch ediyorum  : )
 
-//		try {
+		try {
 
 			$this->setPostFields()				//apiye gidecek inputlar varsa onlari duzenler
 				->initialize()					// * apiye cagri atmadan once gereken duzenlemeleri yapar
@@ -72,13 +73,17 @@ abstract class APIRequest
 				->checkApiResponse()			//apiden gelen sonuclari analiz eder
 				->handleApiResponse()			// * api den donen sonuclari duzenler - api node isimlerini kendi isimlerimiz ile degistirir
 				->handleSuccessfulAttempt();	// *basarili islemler sonu her bir class kendi basarili islemler sonunda ne yapmak isterse onu yapabilir
+		}
+		catch (ValidationException $exception) //validator exceptionlarini oldugunu gibi gonderiyorum
+		{
+			throw $exception;
+		}
+		catch (\Exception $exception)
+		{
+			Log::alert("kod: {$exception->getCode()} | mesaj: ".$exception->getMessage().'|'.$exception->getTraceAsString());
+			$this->handleUnsuccessfulAttempt();	// * basarisiz islemler sonu neler yapilacak ise onlar yapilir
+		}
 
-//		} catch (\Exception $exception) {
-//
-//			Log::alert("kod: {$exception->getCode()} | mesaj: ".$exception->getMessage());
-//			$this->handleUnsuccessfulAttempt();	// * basarisiz islemler sonu neler yapilacak ise onlar yapilir
-//
-//		}
 		return $this;
 	}
 
@@ -105,6 +110,9 @@ abstract class APIRequest
 	protected function checkApiResponse()
 	{
 		if(!empty($this->apiResponse->error) || (!empty($this->apiResponse->status) && $this->apiResponse->status != 'APPROVED') )  {
+			if($this->apiResponse->message == 'Token Expired') redirect('login');
+//			if($this->apiResponse->message == 'Token Expired')
+//				$this->tokenTracker->renew();
 			throw new \RuntimeException(
 				'Basarisiz islem|apiResponse:'.print_r($this->apiResponse,true).
 				'|gonderilenler: hedef:'.$this->getApiEndPoint().

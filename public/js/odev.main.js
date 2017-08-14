@@ -22,6 +22,7 @@ Odev = {
                     logDiv.html(Odev.PrintLoadingGif());
                 },
                 success: function (data) {
+                    console.log(data);
                     if(data.error) logDiv.html(data.error);
                     else window.location.href = '/transaction/list';
                 },
@@ -34,7 +35,6 @@ Odev = {
                 },
                 complete: function (data) {
                     form.show();
-                    console.log(data);
                     setTimeout( function()
                         {
                             allowSubmit = true;
@@ -50,9 +50,6 @@ Odev = {
         return '<img src="/img/ajax-loader.gif">';
     },
     TransactionListClickBinder: function() {
-
-        //$(document).on("click", "#contentArea", function(){
-        //$("#contentArea a" ).click(function( event ) {
         $("#contentArea").delegate('a', 'click', function(event){
             event.preventDefault();
             if(!$(this).is('a')) return;
@@ -65,7 +62,6 @@ Odev = {
                 logDiv = $('#log'),
                 url = '',
                 myModalTitleText = '';
-//console.log(transactionId);
             if(elementType == 'transaction')  { url = '/transaction/'; myModalTitleText = 'Transaction Details' }
             if(elementType == 'merchant') { url = '/merchant/'; myModalTitleText = 'Merchant Details' }
             if(elementType == 'client') { url = '/client/'; myModalTitleText = 'Client Details' }
@@ -80,8 +76,9 @@ Odev = {
                     logDiv.html(Odev.PrintLoadingGif());
                 },
                 success: function (data) {
-                    if(data.error) logDiv.html(data.error).addClass('alert alert-danger');
-                    else  {
+                    if(data.error) {
+                        logDiv.html(data.error).addClass('alert alert-danger');
+                    } else  {
                         myModalTitle.html(myModalTitleText);
                         myModalBody.html(data.htmlFormattedContentArea);
                         myModal.modal('show');
@@ -92,10 +89,12 @@ Odev = {
                     for(datum in data.responseJSON){
                         errors += data.responseJSON[datum] + '<br>';
                     }
-                    console.log(errors);
-                    logDiv.html(errors).addClass('alert alert-danger');
+                    if(!Genel.isRedirectedToLoginPage(data)) {
+                        logDiv.html(errors).addClass('alert alert-danger');
+                    }
                 },
                 complete: function (data) {
+                    Genel.isRedirectedToLoginPage(data,1);
                     setTimeout( function()
                         {
                             allowSubmit = true;
@@ -146,10 +145,11 @@ Odev = {
                     contentArea.html(Odev.PrintLoadingGif(1));
                 },
                 success: function (data) {
-                    if(data.error) logDiv.html(data.error);
+                    if(data.error) logDiv.html(data.error).addClass('alert alert-danger');
                     else {
                         contentArea.html(data.htmlFormattedContentArea);
                         $('#current_page').html(targetPage);
+                        logDiv.html('').removeClass('alert alert-danger');
                     }
                 },
                 error: function (data) {
@@ -157,12 +157,13 @@ Odev = {
                     for(datum in data.responseJSON){
                         errors += data.responseJSON[datum] + '<br>';
                     }
-                    console.log(errors);
-                    contentArea.html(currenContentArea);
-                    logDiv.html(errors).addClass('alert alert-danger');
-
+                    if(!Genel.isRedirectedToLoginPage(data)) {
+                        contentArea.html(currenContentArea);
+                        logDiv.html(errors).addClass('alert alert-danger');
+                    }
                 },
                 complete: function (data) {
+                    Genel.isRedirectedToLoginPage(data,1);
                     $('#fieldCurrentPage').val('1');
                     setTimeout( function()
                         {
@@ -176,4 +177,64 @@ Odev = {
     }
 
 
+},
+Genel = {
+    checkJSON: function(m) {
+        if (typeof m == 'object') {
+            try{
+                m = JSON.stringify(m);
+            } catch(err) {
+                return false;
+            }
+        }
+
+        if (typeof m == 'string') {
+            try{ m = JSON.parse(m); }
+            catch (err) { return false; }
+        }
+
+        if (typeof m != 'object') { return false;}
+        return true;
+
+    },
+    isRedirectedToLoginPage: function(data,doRedirect) {
+        try{
+            if(data.responseText &&  (data.responseText.indexOf('<!--<h2>Login Page</h2>-->') != -1 ) ) {
+                if(doRedirect) {
+                    var redirectionAccepted = confirm("Click OK to re-login : ) ");
+                    if (redirectionAccepted == true)  window.location.href = '/login';
+                }
+                return true;
+            }
+        } catch(err) {
+            return false;
+        }
+    }
 }
+
+//
+//var checkJSON = function(m) {
+//
+//    if (typeof m == 'object') {
+//        try{ m = JSON.stringify(m); }
+//        catch(err) { return false; } }
+//
+//    if (typeof m == 'string') {
+//        try{ m = JSON.parse(m); }
+//        catch (err) { return false; } }
+//
+//    if (typeof m != 'object') { return false; }
+//    return true;
+//
+//};
+//
+//alert(checkJSON('htnk eferf'));
+//
+//
+//checkJSON(JSON.parse('{}'));      //true
+//checkJSON(JSON.parse('{"a":0}')); //true
+//checkJSON('{}');                  //true
+//checkJSON('{"a":0}');             //true
+//checkJSON('x');                   //false
+//checkJSON('');                    //false
+//checkJSON();                      //false
