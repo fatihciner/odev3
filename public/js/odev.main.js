@@ -212,25 +212,17 @@ Genel = {
     }
 }
 
-//
-//var checkJSON = function(m) {
-//
-//    if (typeof m == 'object') {
-//        try{ m = JSON.stringify(m); }
-//        catch(err) { return false; } }
-//
-//    if (typeof m == 'string') {
-//        try{ m = JSON.parse(m); }
-//        catch (err) { return false; } }
-//
-//    if (typeof m != 'object') { return false; }
-//    return true;
-//
-//};
-//
-//alert(checkJSON('htnk eferf'));
-//
-//
+
+
+
+
+
+
+
+
+
+
+
 //checkJSON(JSON.parse('{}'));      //true
 //checkJSON(JSON.parse('{"a":0}')); //true
 //checkJSON('{}');                  //true

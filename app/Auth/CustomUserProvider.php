@@ -1,22 +1,5 @@
 <?php namespace App\Auth;
 
-/*
-
-aldigim yer:
-https://laravel.io/forum/11-04-2014-laravel-5-how-do-i-create-a-custom-auth-in-laravel-5
-fix:
-https://stackoverflow.com/questions/28890409/laravel-custom-authentication
---
-http://laravel-recipes.com/recipes/115/using-your-own-authentication-driver
-
-use Illuminate\Contracts\Auth\User as UserContract;
-use Illuminate\Auth\UserProviderInterface;
-
-class CustomUserProvider implements UserProviderInterface {
-*/
-
-
-
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Contracts\Hashing\Hasher as HasherContract;
 use Illuminate\Contracts\Auth\Authenticatable as UserContract;
