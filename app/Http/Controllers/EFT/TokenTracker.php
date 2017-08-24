@@ -8,44 +8,67 @@ namespace App\Http\Controllers\EFT;
  * Time: 02:39
  */
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
 class TokenTracker
 {
+	use LoginTrait;
 
-	public function __construct()
+	public function __construct(Request $request)
 	{
-	}
-
-	public function set($userId='', $userCredentials=[])
-	{
-		Cache::put(
-			$userId,
-			$userCredentials,
-			env('API_TOKEN_EXPIRE_TIME_IN_MINUTES') * 1
-		);
+		$this->request      = $request;
 	}
 
 	public function get()
 	{
+		//$this->delete();
 		foreach(Cache::get(Auth::userData('id'), function(){return [];}) AS $key=>$value) {
 			if ($key == 'token' ) return $value;
 		}
 		return $this->renew();
 	}
 
-	public function renew() {
+	public function renew()
+	{
 		if(!Auth::check())
-			throw new \RuntimeException('Cant renew token', 9999);
+			throw new \RuntimeException('Cant auto renew token', 9999);
 		$cachedData = Cache::get(Auth::userData('id'));
 		$this->request->request->add( [ 'email' => $cachedData['email'], 'password' => $cachedData['password'] ] );
-		$result = $this->apiRequest->doRun()->getJsonResult();
-		//dd($result);
+		$apiRequest = new APIRequestLogin($this->request,$this);
+		$result = $apiRequest->doRun()->getJsonResult();
 		if(!empty($result['error']))
-			redirect('login');//throw new \RuntimeException('Couldnt renew token', 9999);
+			redirect('login'); //throw new \RuntimeException('Couldnt renew token', 9999);
+		else
+			ret
 	}
 
+	public function set($userCredentials=[])
+	{
+		Cache::put(
+			$this->getUserId($userCredentials),
+			$userCredentials,
+			env('API_TOKEN_EXPIRE_TIME_IN_MINUTES') * 1
+		);
+	}
+
+	//for testing purposes
+	public function delete() {
+		//dd(Auth::user());
+		$userCredentials = Cache::get(Auth::userData('id'));
+		//dd($userCredentials);
+		$userId = md5($userCredentials['email'].$userCredentials['password']);
+		Cache::put(
+			$userId,
+			array_merge(
+				['email'=>'demo@bumin.com.tr', 'password'=>'cjaiU8CV'],
+				['token' => 'xxxx']
+			),
+			env('API_TOKEN_EXPIRE_TIME_IN_MINUTES') * 1
+		);
+		dd("Token Deleted");
+	}
 
 }
 

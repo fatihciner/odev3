@@ -7,7 +7,7 @@ use Illuminate\Validation\ValidationException;
 
 abstract class APIRequest
 {
-	protected $request, $tokenTracker, $postFields, $apiResponse, $header;
+	protected $request, $postFields, $apiResponse, $header,$tokenTracker;
 	private $result;
 
 	const fieldTypeNameRequired = 'required';
@@ -15,7 +15,7 @@ abstract class APIRequest
 
 	public function __construct(Request $request, TokenTracker $tokenTracker)
 	{
-		$this->tokenTracker = $tokenTracker;
+		$this->tokenTracker= $tokenTracker;
 		$this->request = $request;
 	}
 
@@ -63,9 +63,7 @@ abstract class APIRequest
 		// single responsibility icin bir kisim metodlari kendi classlarina ayirmak daiyi bir refctoring olabilir.
 		// bir diger yapilmasi gerken de her bir islemin kendi ozel exceptionuu atmasi gerekiyor. simdilik ben
 		// hepsini tek bir exception turu altinda  catch ediyorum  : )
-
 		try {
-
 			$this->setPostFields()				//apiye gidecek inputlar varsa onlari duzenler
 				->initialize()					// * apiye cagri atmadan once gereken duzenlemeleri yapar
 				->setHeaderData()				// * apiye gidecek header degerleri varsa onlari duzenler
@@ -110,9 +108,15 @@ abstract class APIRequest
 	protected function checkApiResponse()
 	{
 		if(!empty($this->apiResponse->error) || (!empty($this->apiResponse->status) && $this->apiResponse->status != 'APPROVED') )  {
-			if($this->apiResponse->message == 'Token Expired') redirect('login');
+//			if($this->apiResponse->message == 'Token Expired') redirect('login');
 //			if($this->apiResponse->message == 'Token Expired')
 //				$this->tokenTracker->renew();
+			if($this->apiResponse->status == 'DECLINED') {
+				//(new TokenTracker($this->request))->renew();
+				if($this->tokenTracker->renew()) {
+					//TODO: basarili ise suandaki işlemleri yenidn calıştırmak lazım.
+				}
+			}
 			throw new \RuntimeException(
 				'Basarisiz islem|apiResponse:'.print_r($this->apiResponse,true).
 				'|gonderilenler: hedef:'.$this->getApiEndPoint().

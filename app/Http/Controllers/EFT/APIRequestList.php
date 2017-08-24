@@ -20,6 +20,7 @@ class APIRequestList extends APIRequest
 	{
 		$this->header = [
 			'Authorization' => $this->tokenTracker->get()
+			//'Authorization' => (new TokenTracker($this->request))->get()
 		];
 		return $this;
 	}

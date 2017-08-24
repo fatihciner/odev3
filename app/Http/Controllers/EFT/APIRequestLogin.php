@@ -8,16 +8,12 @@
 
 namespace App\Http\Controllers\EFT;
 
-use Session;
-//use Illuminate\Support\Facades\Log;
-//use Illuminate\Http\Request;
-
-//use Illuminate\Support\Facades\Auth;
-//use Illuminate\Support\Facades\Cache;
+//use Session;
 
 class APIRequestLogin extends APIRequest
 {
 
+	use LoginTrait;
 
 	public function initialize()
 	{
@@ -27,10 +23,17 @@ class APIRequestLogin extends APIRequest
 
 	protected function handleApiResponse()
 	{
-		return $this->LogUser();
+		//return $this->LogUser();
+		return $this->LogUser(
+			[
+				FieldType::EMAIL    => $this->getValidPostFields(APIRequest::fieldTypeNameRequired)['email'],
+				FieldType::PASSWORD => $this->getValidPostFields(APIRequest::fieldTypeNameRequired)['password'],
+				FieldType::TOKEN    => $this->apiResponse->token
+			]
+		);
 	}
 
-	private function logUser()
+	/*private function logUser()
 	{
 		$userId = md5(
 				$this->getValidPostFields(APIRequest::fieldTypeNameRequired)['email'].
@@ -55,7 +58,7 @@ class APIRequestLogin extends APIRequest
 		Session::save();
 
 		return $this;
-	}
+	}*/
 
 	protected function handleUnsuccessfulAttempt()
 	{
