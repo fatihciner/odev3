@@ -23,7 +23,7 @@ class TokenTracker
 		Cache::put(
 			$userId,
 			$userCredentials,
-			env('API_TOKEN_EXPIRE_TIME_IN_MINUTES') * 1
+			env('API_TOKEN_EXPIRE_TIME_IN_MINUTES') * 10
 		);
 	}
 
