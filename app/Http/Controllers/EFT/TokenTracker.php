@@ -42,7 +42,7 @@ class TokenTracker
 
 	public function renew()
 	{
-		return false;
+		//return false;
 		if(!Auth::check())
 			throw new \RuntimeException('Cant auto renew token', 9999);
 		$cachedData = Cache::get(Auth::userData('id'));

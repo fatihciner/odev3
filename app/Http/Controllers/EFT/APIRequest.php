@@ -91,7 +91,8 @@ abstract class APIRequest
 		{
 			//return redirect('login')->with('errors', session()->get('errors', new ViewErrorBag)->put('default', $bag));
 			//return redirect('/login')->with('errors', (new \ViewErrorBag)->put('default', 'Token Regist3er Edemedim'));
-			throw new MustReLoginException($exception->getMessage());
+			//throw new MustReLoginException($exception->getMessage());
+			$this->handleUnsuccessfulAttempt();
 		}
 		catch (\Exception $exception)
 		{
@@ -150,15 +151,7 @@ abstract class APIRequest
 
 	public function getJsonResult()
 	{
-		try
-		{
-			return json_encode($this->result);
-		}
-		catch (MustReLoginException $exception)
-		{
-			return redirect('/login')->with('errors', (new \ViewErrorBag)->put('default', 'Token Regist3er Edemedim'));
-		}
-
+		return json_encode($this->result);
 	}
 
 	public function getResult()
