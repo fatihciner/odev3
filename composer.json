@@ -24,7 +24,9 @@
             "App\\": "app/"
         },
         "files": [
-            "app/helpers.php"
+            "app/helpers.php",
+            "app/Exceptions/TokenRenewedException.php",
+            "app/Exceptions/MustReLoginException.php"
         ]
     },
     "autoload-dev": {

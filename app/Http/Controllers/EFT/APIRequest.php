@@ -4,6 +4,8 @@ namespace App\Http\Controllers\EFT;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use App\Exceptions\TokenRenewedException;
+use App\Exceptions\MustReLoginException;
 
 abstract class APIRequest
 {
@@ -64,6 +66,7 @@ abstract class APIRequest
 		// bir diger yapilmasi gerken de her bir islemin kendi ozel exceptionuu atmasi gerekiyor. simdilik ben
 		// hepsini tek bir exception turu altinda  catch ediyorum  : )
 		try {
+			//$this->tokenTracker->delete();
 			$this->setPostFields()				//apiye gidecek inputlar varsa onlari duzenler
 				->initialize()					// * apiye cagri atmadan once gereken duzenlemeleri yapar
 				->setHeaderData()				// * apiye gidecek header degerleri varsa onlari duzenler
@@ -76,12 +79,25 @@ abstract class APIRequest
 		{
 			throw $exception;
 		}
+		catch (TokenRenewedException $exception) //validator exceptionlarini oldugunu gibi gonderiyorum
+		{
+			if (\Session::has('alreadyTriedToRenewToken')) {
+				return $this->handleUnsuccessfulAttempt();
+			}
+			$this->request->session()->flash('alreadyTriedToRenewToken', '1');
+			return $this->doRun();
+		}
+		catch (MustReLoginException $exception) //validator exceptionlarini oldugunu gibi gonderiyorum
+		{
+			//return redirect('login')->with('errors', session()->get('errors', new ViewErrorBag)->put('default', $bag));
+			//return redirect('/login')->with('errors', (new \ViewErrorBag)->put('default', 'Token Regist3er Edemedim'));
+			throw new MustReLoginException($exception->getMessage());
+		}
 		catch (\Exception $exception)
 		{
 			Log::alert("kod: {$exception->getCode()} | mesaj: ".$exception->getMessage().'|'.$exception->getTraceAsString());
 			$this->handleUnsuccessfulAttempt();	// * basarisiz islemler sonu neler yapilacak ise onlar yapilir
 		}
-
 		return $this;
 	}
 
@@ -108,14 +124,11 @@ abstract class APIRequest
 	protected function checkApiResponse()
 	{
 		if(!empty($this->apiResponse->error) || (!empty($this->apiResponse->status) && $this->apiResponse->status != 'APPROVED') )  {
-//			if($this->apiResponse->message == 'Token Expired') redirect('login');
 //			if($this->apiResponse->message == 'Token Expired')
-//				$this->tokenTracker->renew();
-			if($this->apiResponse->status == 'DECLINED') {
-				//(new TokenTracker($this->request))->renew();
-				if($this->tokenTracker->renew()) {
-					//TODO: basarili ise suandaki işlemleri yenidn calıştırmak lazım.
-				}
+			if( $this->apiResponse->status == 'DECLINED') {
+				if($this->tokenTracker->renew() !== true)
+					throw new MustReLoginException('Token Renew Process Failed');
+				throw new TokenRenewedException('token successfully renewed');
 			}
 			throw new \RuntimeException(
 				'Basarisiz islem|apiResponse:'.print_r($this->apiResponse,true).
@@ -137,7 +150,15 @@ abstract class APIRequest
 
 	public function getJsonResult()
 	{
-		return json_encode($this->result);
+		try
+		{
+			return json_encode($this->result);
+		}
+		catch (MustReLoginException $exception)
+		{
+			return redirect('/login')->with('errors', (new \ViewErrorBag)->put('default', 'Token Regist3er Edemedim'));
+		}
+
 	}
 
 	public function getResult()

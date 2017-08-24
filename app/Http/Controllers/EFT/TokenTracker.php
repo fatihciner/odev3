@@ -14,16 +14,26 @@ use Illuminate\Support\Facades\Cache;
 
 class TokenTracker
 {
+	private $request;
+
 	use LoginTrait;
 
 	public function __construct(Request $request)
 	{
-		$this->request      = $request;
+		$this->request = $request;
+	}
+
+	public function set($userId='', $userCredentials=[])
+	{
+		Cache::put(
+			$userId,
+			$userCredentials,
+			env('API_TOKEN_EXPIRE_TIME_IN_MINUTES') * 10
+		);
 	}
 
 	public function get()
 	{
-		//$this->delete();
 		foreach(Cache::get(Auth::userData('id'), function(){return [];}) AS $key=>$value) {
 			if ($key == 'token' ) return $value;
 		}
@@ -32,26 +42,16 @@ class TokenTracker
 
 	public function renew()
 	{
+		return false;
 		if(!Auth::check())
 			throw new \RuntimeException('Cant auto renew token', 9999);
 		$cachedData = Cache::get(Auth::userData('id'));
 		$this->request->request->add( [ 'email' => $cachedData['email'], 'password' => $cachedData['password'] ] );
 		$apiRequest = new APIRequestLogin($this->request,$this);
 		$result = $apiRequest->doRun()->getJsonResult();
-		if(!empty($result['error']))
-			redirect('login'); //throw new \RuntimeException('Couldnt renew token', 9999);
-		else
-			ret
+		return !empty($result['error']) ?  false : true;
 	}
 
-	public function set($userCredentials=[])
-	{
-		Cache::put(
-			$this->getUserId($userCredentials),
-			$userCredentials,
-			env('API_TOKEN_EXPIRE_TIME_IN_MINUTES') * 1
-		);
-	}
 
 	//for testing purposes
 	public function delete() {
